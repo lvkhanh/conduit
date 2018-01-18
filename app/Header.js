@@ -1,7 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = (props) => {
+const Header = ({user}) => {
+
+    let infoEle, signInEle, signUpEle;
+
+    if (user) {
+        infoEle = (
+            <li className="nav-item">
+                <Link to="/settings" className="nav-link">
+                    {user.username}
+                </Link>
+            </li>
+        );
+    } else {
+        signInEle = (
+            <li className="nav-item">
+                <Link className="nav-link" to="/login">Sign in</Link>
+            </li>
+        );
+        signUpEle = (
+            <li className="nav-item">
+                <Link className="nav-link" to="/register">Sign up</Link>
+            </li>
+        )
+    }
+
     return (
         <nav className="navbar navbar-light">
             <div className="container">
@@ -15,17 +39,9 @@ const Header = (props) => {
                             <i className="ion-compose"></i>&nbsp;New Post
                         </Link>
                     </li>
-                    <li className="nav-item">
-                        <Link to="/settings" className="nav-link">
-                            <i className="ion-gear-a"></i>&nbsp;Settings
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/login">Sign in</Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/register">Sign up</Link>
-                    </li>
+                    {infoEle}
+                    {signInEle}
+                    {signUpEle}
                 </ul>
             </div>
         </nav>

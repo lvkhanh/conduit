@@ -3,16 +3,22 @@ import axios from 'axios';
 const SERVER = 'https://conduit.productionready.io/api/';
 
 var getEndPoint = (endpoint) => [ SERVER, endpoint ].join('');
+var withAuthHeader = (token) => {
+    return {
+        'Authorization': `Token ${token}`
+    }
+};
 
 var api = {
     login(user) {
         let { email, password } = user;
 
-        let loginEndpoint = getEndPoint('login');
+        let loginEndpoint = getEndPoint('users/login');
 
         return axios.post(loginEndpoint, {
             user: { email, password }
-        });
+        })
+        .then(response => response.data.user);
     },
 
     register(user) {
@@ -25,8 +31,10 @@ var api = {
         });
     },
 
-    currentUser() {
-        return axios.get(getEndPoint('user'));
+    currentUser(token) {
+        return axios.get(getEndPoint('user'), {
+            headers: withAuthHeader(token)
+        }).then(response => response.data.user);
     },
 
     updateUser(user) {
@@ -67,15 +75,18 @@ var api = {
         return axios.get(articlesEndpoint, { params });
     },
 
-    articlesFeed(params) {
+    articlesFeed(params, token) {
         let feedEndpoint = getEndPoint('articles/feed');
 
-        return axios.get(feedEndpoint, { params });
+        return axios.get(feedEndpoint, {
+            params,
+            headers: withAuthHeader(token)
+        });
     },
 
     getTags() {
         return axios.get(getEndPoint('tags'))
-                    .then(response => response.data);
+                    .then(response => response.data.tags);
     }
 };
 

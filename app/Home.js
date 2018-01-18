@@ -10,7 +10,10 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        console.log('call api here...');
+        this.props.api.getTags()
+            .then(tags => {
+                this.setState({tags});
+            });
     }
 
     render() {
@@ -81,15 +84,13 @@ class Home extends Component {
                                 <p>Popular Tags</p>
 
                                 <div className="tag-list">
-                                    { /*this.state.tags.map((tag, index) => (<a key={index} href="" className="tag-pill tag-default">{tag}</a>)) */}
-
-                                    <a href="" className="tag-pill tag-default">javascript</a>
-                                    <a href="" className="tag-pill tag-default">emberjs</a>
-                                    <a href="" className="tag-pill tag-default">angularjs</a>
-                                    <a href="" className="tag-pill tag-default">react</a>
-                                    <a href="" className="tag-pill tag-default">mean</a>
-                                    <a href="" className="tag-pill tag-default">node</a>
-                                    <a href="" className="tag-pill tag-default">rails</a>
+                                    {
+                                        this.state.tags.map(
+                                            (tag, index) => (
+                                                <a key={index} href="" className="tag-pill tag-default">{tag}</a>
+                                            )
+                                        )
+                                    }
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class Settings extends Component {
+
     render() {
         return (
             <div className="settings-page">
@@ -32,6 +33,10 @@ class Settings extends Component {
                                     </button>
                                 </fieldset>
                             </form>
+                            <hr/>
+                            <button className="btn btn-outline-danger" onClick={this.props.handleSignOut}>
+                                Or click here to logout.
+                            </button>
                         </div>
 
                     </div>
