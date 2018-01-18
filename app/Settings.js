@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 
 class Settings extends Component {
 
+    handleSignOut () {
+        this.props.handleSignOut(this.props.history);
+    }
+
     render() {
         return (
             <div className="settings-page">
@@ -34,7 +38,7 @@ class Settings extends Component {
                                 </fieldset>
                             </form>
                             <hr/>
-                            <button className="btn btn-outline-danger" onClick={this.props.handleSignOut}>
+                            <button className="btn btn-outline-danger" onClick={this.handleSignOut.bind(this)}>
                                 Or click here to logout.
                             </button>
                         </div>

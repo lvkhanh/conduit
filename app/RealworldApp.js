@@ -14,6 +14,7 @@ import Settings from './Settings';
 
 import Api from './services/api';
 import Storage from './services/storage';
+import withProps from './hocs/withProps';
 
 const TOKEN_KEY = 'jwtToken';
 
@@ -21,21 +22,13 @@ class RealworldApp extends Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             loading: true
         };
-    }
 
-    getSignInComponent (routeProps) {
-        return (
-            <SignIn {...routeProps} api={Api} handleSignIn={this.handleSignIn.bind(this)}/>
-        );
-    }
-
-    getHomeComponent (routeProps) {
-        return (
-            <Home {...routeProps} api={Api}/>
-        );
+        this.handleSignIn = this.handleSignIn.bind(this);
+        this.handleSignOut = this.handleSignOut.bind(this);
     }
 
     handleSignIn(user) {
@@ -44,9 +37,10 @@ class RealworldApp extends Component {
         this.user = user;
     }
 
-    handleSignOut() {
+    handleSignOut(history) {
         this.user = undefined;
         Storage.remove(TOKEN_KEY);
+        history.push('/home');
     }
 
     componentDidMount() {
@@ -67,6 +61,10 @@ class RealworldApp extends Component {
     }
 
     render() {
+        const api = Api,
+            handleSignIn = this.handleSignIn,
+            handleSignOut = this.handleSignOut;
+
         if(this.state.loading) {
             return <div>Loading...</div>;
         }
@@ -76,13 +74,10 @@ class RealworldApp extends Component {
                 <Header user={this.user}/>
                 <div className="content">
                     <Switch>
-                        <Route path="/" exact component={this.getHomeComponent.bind(this)} />
+                        <Route path="/" exact component={withProps({api})(Home)} />
                         <Route path="/editor" component={EditArticle} />
-                        <Route path="/settings" component={(routerProps) => <Settings handleSignOut={() => {
-                            this.handleSignOut();
-                            routerProps.history.push('/home');
-                        }}/>} />
-                        <Route path="/login" component={this.getSignInComponent.bind(this)} />
+                        <Route path="/settings" component={withProps({handleSignOut})(Settings)} />
+                        <Route path="/login" component={withProps({api, handleSignIn})(SignIn)} />
                         <Route path="/register" component={Register} />
                         <Redirect to="/" />
                     </Switch>

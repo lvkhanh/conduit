@@ -82,7 +82,6 @@ class Home extends Component {
                         <div className="col-md-3">
                             <div className="sidebar">
                                 <p>Popular Tags</p>
-
                                 <div className="tag-list">
                                     {
                                         this.state.tags.map(

@@ -1,0 +1,6 @@
+2017-01-18
+- SignIn:
+    * use 'ref' instead of onChange
+    * history.push('/home') insteadof Redirect
+- RealworldApp:
+    * withProps HoC

@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 class SignIn extends Component {
+
     constructor (props) {
         super(props);
-
         this.state = {
-            invalidInfo: false/*,
-            loginSuccess: false*/
+            invalidInfo: false
         }
     }
 
@@ -20,9 +19,6 @@ class SignIn extends Component {
             })
             .then(user => {
                 this.props.handleSignIn(user);
-                /*this.setState({
-                    loginSuccess: true
-                });*/
                 this.props.history.push('/home');
             })
             .catch(e => {
@@ -31,10 +27,6 @@ class SignIn extends Component {
     }
 
     render () {
-        /*if (this.state.loginSuccess) {
-            return <Redirect to="/home"/>
-        }*/
-
         return (
             <div className="auth-page">
                 <div className="container page">
