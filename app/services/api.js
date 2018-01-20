@@ -75,7 +75,7 @@ var api = {
         return axios.get(articlesEndpoint, { params });
     },
 
-    articlesFeed(params, token) {
+    articlesFeed(token, params) {
         let feedEndpoint = getEndPoint('articles/feed');
 
         return axios.get(feedEndpoint, {

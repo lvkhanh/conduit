@@ -12,11 +12,9 @@ import Article from './Article';
 import EditArticle from './EditArticle';
 import Settings from './Settings';
 
+import Token from './services/token';
 import Api from './services/api';
-import Storage from './services/storage';
 import withProps from './hocs/withProps';
-
-const TOKEN_KEY = 'jwtToken';
 
 class RealworldApp extends Component {
 
@@ -24,61 +22,57 @@ class RealworldApp extends Component {
         super(props);
 
         this.state = {
+            user: undefined,
             loading: true
         };
 
-        this.handleSignIn = this.handleSignIn.bind(this);
-        this.handleSignOut = this.handleSignOut.bind(this);
+        this.setUser = this.setUser.bind(this);
+        this.removeUser = this.removeUser.bind(this);
     }
 
-    handleSignIn(user) {
-        let {token} = user;
-        Storage.set(TOKEN_KEY, token);
-        this.user = user;
+    setUser(user) {
+        this.setState({user});
     }
 
-    handleSignOut(history) {
-        this.user = undefined;
-        Storage.remove(TOKEN_KEY);
-        history.push('/home');
+    removeUser() {
+        this.setState({user: undefined});
     }
 
     componentDidMount() {
-        let token = Storage.get(TOKEN_KEY);
-        if (!token) {
-            this.setState({
-                loading: false
-            });
-        } else {
-            Api.currentUser(token)
+        let token = Token.get();
+        if (token) {
+            Api
+                .currentUser(token)
                 .then(user => {
-                    this.user = user;
                     this.setState({
+                        user,
                         loading: false
                     });
                 });
+        } else {
+            this.setState({
+                loading: false
+            });
         }
     }
 
     render() {
-        const api = Api,
-            handleSignIn = this.handleSignIn,
-            handleSignOut = this.handleSignOut;
 
-        if(this.state.loading) {
-            return <div>Loading...</div>;
-        }
+        console.log('RealApp render');
+
+        const   {user, loading} = this.state,
+                setUser = this.setUser,
+                removeUser = this.removeUser;
 
         return (
             <div>
-                <Header user={this.user}/>
+                <Header user={user} loading={loading}/>
                 <div className="content">
                     <Switch>
-                        <Route path="/" exact component={withProps({api})(Home)} />
-                        <Route path="/editor" component={EditArticle} />
-                        <Route path="/settings" component={withProps({handleSignOut})(Settings)} />
-                        <Route path="/login" component={withProps({api, handleSignIn})(SignIn)} />
-                        <Route path="/register" component={Register} />
+                        <Route path="/" exact   component={Home} />
+                        <Route path="/login"    component={withProps({setUser})(SignIn)} />
+                        <Route path="/settings" component={withProps({user, removeUser})(Settings)} />
+                        <Route path="/editor"   component={EditArticle} />
                         <Redirect to="/" />
                     </Switch>
                 </div>

@@ -1,22 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
+import Feeds from './Feeds';
+import Tags from './Tags';
 
-class Home extends Component {
+class Home extends PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            tags: []
+            isYourFeed: true
         };
+
+        this.handleFeedClick = this.handleFeedClick.bind(this);
+
+        console.log('Home constructor');
     }
 
-    componentDidMount() {
-        this.props.api.getTags()
-            .then(tags => {
-                this.setState({tags});
-            });
+    handleFeedClick (e) {
+        let {id} = e.target,
+            isYourFeed;
+        if (id === 'yourFeed') {
+            isYourFeed = true;
+        } else {
+            isYourFeed = false;
+        }
+        this.setState({isYourFeed});
     }
 
     render() {
+        console.log('Home render');
         return (
             <div className="home-page">
                 <div className="banner">
@@ -33,67 +44,19 @@ class Home extends Component {
                             <div className="feed-toggle">
                                 <ul className="nav nav-pills outline-active">
                                     <li className="nav-item">
-                                        <a className="nav-link disabled" href="">Your Feed</a>
+                                        <a id="yourFeed" className={`nav-link ${this.state.isYourFeed ? 'active' : 'disabled' }`} href="#" onClick={this.handleFeedClick}>Your Feed</a>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link active" href="">Global Feed</a>
+                                        <a id="globalFeed" className={`nav-link ${this.state.isYourFeed ? 'disabled' : 'active' }`} href="#" onClick={this.handleFeedClick}>Global Feed</a>
                                     </li>
                                 </ul>
                             </div>
 
-                            <div className="article-preview">
-                                <div className="article-meta">
-                                    <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                                    <div className="info">
-                                        <a href="" className="author">Eric Simons</a>
-                                        <span className="date">January 20th</span>
-                                    </div>
-                                    <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                        <i className="ion-heart"></i> 29
-                                    </button>
-                                </div>
-                                <a href="" className="preview-link">
-                                    <h1>How to build webapps that scale</h1>
-                                    <p>This is the description for the post.</p>
-                                    <span>Read more...</span>
-                                </a>
-                            </div>
-
-                            <div className="article-preview">
-                                <div className="article-meta">
-                                    <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                                    <div className="info">
-                                        <a href="" className="author">Albert Pai</a>
-                                        <span className="date">January 20th</span>
-                                    </div>
-                                    <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                        <i className="ion-heart"></i> 32
-                                    </button>
-                                </div>
-                                <a href="" className="preview-link">
-                                    <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                                    <p>This is the description for the post.</p>
-                                    <span>Read more...</span>
-                                </a>
-                            </div>
+                            <Feeds/>
 
                         </div>
 
-                        <div className="col-md-3">
-                            <div className="sidebar">
-                                <p>Popular Tags</p>
-                                <div className="tag-list">
-                                    {
-                                        this.state.tags.map(
-                                            (tag, index) => (
-                                                <a key={index} href="" className="tag-pill tag-default">{tag}</a>
-                                            )
-                                        )
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
+                        <Tags/>
                     </div>
                 </div>
             </div>

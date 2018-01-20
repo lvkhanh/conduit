@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter as Router } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 
 import RealworldApp from './RealworldApp';
 
 var App = () => (
-    <Router>
+    <HashRouter>
         <RealworldApp />
-    </Router>
+    </HashRouter>
 );
 
 ReactDOM.render(

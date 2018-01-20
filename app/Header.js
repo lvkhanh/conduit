@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = ({user}) => {
+const Header = ({user, loading}) => {
 
     let infoEle, signInEle, signUpEle;
 
@@ -14,16 +14,25 @@ const Header = ({user}) => {
             </li>
         );
     } else {
-        signInEle = (
-            <li className="nav-item">
-                <Link className="nav-link" to="/login">Sign in</Link>
-            </li>
-        );
-        signUpEle = (
-            <li className="nav-item">
-                <Link className="nav-link" to="/register">Sign up</Link>
-            </li>
-        )
+        if (loading) {
+            signInEle = (
+                <li className="nav-item">
+                    <a className="nav-link" href="#">Loading...</a>
+                </li>
+            );
+        } else {
+            signInEle = (
+                <li className="nav-item">
+                    <Link className="nav-link" to="/login">Sign in</Link>
+                </li>
+            );
+            signUpEle = (
+                <li className="nav-item">
+                    <Link className="nav-link" to="/register">Sign up</Link>
+                </li>
+            )
+        }
+
     }
 
     return (

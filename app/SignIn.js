@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import Token from  './services/token';
+import Api from  './services/api';
 
 class SignIn extends Component {
 
@@ -12,13 +14,17 @@ class SignIn extends Component {
 
     handleSubmit (e) {
         e.preventDefault();
-        this.props.api
+        Api
             .login({
                 email: this.emailInput.value,
                 password: this.passwordInput.value
             })
             .then(user => {
-                this.props.handleSignIn(user);
+                let {token} = user;
+                Token.set(token);
+
+                this.props.setUser(user);
+
                 this.props.history.push('/home');
             })
             .catch(e => {
