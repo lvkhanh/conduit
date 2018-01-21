@@ -69,11 +69,18 @@ var api = {
         return axios.delete(followEndpoint);
     },
 
-    articlesList(params) {
+    articlesList(token, params) {
         let articlesEndpoint = getEndPoint('articles');
 
+        if (token) {
+            params = {
+                params: params,
+                headers: withAuthHeader(token)
+            }
+        }
+
         return axios
-            .get(articlesEndpoint, { params })
+            .get(articlesEndpoint, { ...params })
             .then(response => response.data);
     },
 
@@ -91,6 +98,24 @@ var api = {
     getTags() {
         return axios.get(getEndPoint('tags'))
                     .then(response => response.data.tags);
+    },
+
+    favoriteArticle(token, slug) {
+        let favoriteEndpoint = getEndPoint(`articles/${slug}/favorite`);
+        return axios
+            .post(favoriteEndpoint, null, {
+                headers: withAuthHeader(token)
+            })
+            .then(response => response.data.article);
+    },
+
+    unfavoriteArticle(token, slug) {
+        let unfavoriteEndpoint = getEndPoint(`articles/${slug}/favorite`);
+        return axios
+            .delete(unfavoriteEndpoint, {
+                headers: withAuthHeader(token)
+            })
+            .then(response => response.data.article);
     }
 };
 

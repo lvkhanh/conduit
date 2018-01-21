@@ -4,7 +4,9 @@ import moment from 'moment';
 import Api from './services/api';
 import Token from './services/token';
 
-import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
+/*import Perf from 'react-addons-perf';*/
+
+    import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
 
 const LIMIT = {
     limit: 10
@@ -19,6 +21,7 @@ class Feeds extends Component {
             articles: [],
             loading: true
         }
+        this.handleFavorite = this.handleFavorite.bind(this);
     }
 
     componentDidMount () {
@@ -26,6 +29,8 @@ class Feeds extends Component {
     }
 
     componentWillReceiveProps ({activeFeed}) {
+        if (this.props.activeFeed === activeFeed) return;
+
         this.setState({
             articles: [],
             loading: true
@@ -41,7 +46,7 @@ class Feeds extends Component {
         if (activeFeed === YOUR_FEED_UNI_ID) {
             getFeeds = Api.articlesFeed(this.token, LIMIT);
         } else if (activeFeed === GLOBAL_FEED_UNI_ID) {
-            getFeeds = Api.articlesList(LIMIT)
+            getFeeds = Api.articlesList(this.token, LIMIT)
         } else {
             getFeeds = Api.articlesList({
                 ...LIMIT,
@@ -55,6 +60,32 @@ class Feeds extends Component {
                 loading: false
             })
         })
+    }
+
+    handleFavorite (e, a) {
+        e.preventDefault();
+
+        if (!this.token) return;
+
+        let {slug, favorited} = a,
+            exec;
+        if (favorited) {
+            exec = Api.unfavoriteArticle(this.token, slug);
+        } else {
+            exec = Api.favoriteArticle(this.token, slug);
+        }
+
+        exec.then(article => {
+            this.setState({
+                articles: this.state.articles.map(_article => {
+                    if (_article.slug === article.slug) {
+                        _article.favoritesCount = article.favoritesCount;
+                        _article.favorited = article.favorited;
+                    }
+                    return _article;
+                })
+            })
+        });
     }
 
     render () {
@@ -87,7 +118,7 @@ class Feeds extends Component {
                                     <Link to={`/author/${article.author.username}`} className="author">{article.author.username}</Link>
                                     <span className="date">{moment(article.createdAt).format('MMMM DD, YYYY')}</span>
                                 </div>
-                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
+                                <button className={`btn btn-sm pull-xs-right ${article.favorited ? 'btn-primary' : 'btn-outline-primary'}`} onClick={(e) => this.handleFavorite(e, article)}>
                                     <i className="ion-heart"></i> {article.favoritesCount}
                                 </button>
                             </div>
@@ -109,6 +140,15 @@ class Feeds extends Component {
             </div>
         );
     }
+/*
+    componentWillUpdate() {
+        Perf.start()
+    }
+
+    componentDidUpdate() {
+        Perf.stop()
+        Perf.printOperations()
+    }*/
 }
 
 export default Feeds;
