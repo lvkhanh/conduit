@@ -3,10 +3,9 @@ import {Link} from 'react-router-dom';
 import moment from 'moment';
 import Api from './services/api';
 import Token from './services/token';
+import Handle from './services/handle';
 
-/*import Perf from 'react-addons-perf';*/
-
-    import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
+import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
 
 const LIMIT = {
     limit: 10
@@ -48,7 +47,7 @@ class Feeds extends Component {
         } else if (activeFeed === GLOBAL_FEED_UNI_ID) {
             getFeeds = Api.articlesList(this.token, LIMIT)
         } else {
-            getFeeds = Api.articlesList({
+            getFeeds = Api.articlesList(this.token, {
                 ...LIMIT,
                 tag: activeFeed
             });
@@ -63,19 +62,7 @@ class Feeds extends Component {
     }
 
     handleFavorite (e, a) {
-        e.preventDefault();
-
-        if (!this.token) return;
-
-        let {slug, favorited} = a,
-            exec;
-        if (favorited) {
-            exec = Api.unfavoriteArticle(this.token, slug);
-        } else {
-            exec = Api.favoriteArticle(this.token, slug);
-        }
-
-        exec.then(article => {
+        Handle.favorite(e, a, this.token, article => {
             this.setState({
                 articles: this.state.articles.map(_article => {
                     if (_article.slug === article.slug) {
@@ -84,7 +71,7 @@ class Feeds extends Component {
                     }
                     return _article;
                 })
-            })
+            });
         });
     }
 
@@ -122,7 +109,7 @@ class Feeds extends Component {
                                     <i className="ion-heart"></i> {article.favoritesCount}
                                 </button>
                             </div>
-                            <Link to={`/article/${article.slug}`} className="preview-link">
+                            <Link to={`/article/view/${article.slug}`} className="preview-link">
                                 <h1>{article.title}</h1>
                                 <p>{article.description}</p>
                                 <span>Read more...</span>
@@ -140,15 +127,6 @@ class Feeds extends Component {
             </div>
         );
     }
-/*
-    componentWillUpdate() {
-        Perf.start()
-    }
-
-    componentDidUpdate() {
-        Perf.stop()
-        Perf.printOperations()
-    }*/
 }
 
 export default Feeds;

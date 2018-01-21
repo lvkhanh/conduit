@@ -1,30 +1,35 @@
 import React, { Component } from 'react';
+import Api from './services/api';
+import Token from './services/token';
+import ArticleMeta from './ArticleMeta';
 
 class Article extends Component {
-    render() {
+
+    constructor (props) {
+        super(props);
+        this.token = Token.get();
+        this.state = {
+            article: {}
+        }
+    }
+
+    componentDidMount () {
+        let id = this.props.match.params.id;
+        Api
+            .getArticle(this.token, id)
+            .then(article => {
+                this.setState({article});
+            })
+    }
+
+    render () {
+        let {title, body} = this.state.article;
         return (
             <div className="article-page">
                 <div className="banner">
                     <div className="container">
-                        <h1>How to build webapps that scale</h1>
-                        <div className="article-meta">
-                            <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                            <div className="info">
-                                <a href="" className="author">Eric Simons</a>
-                                <span className="date">January 20th</span>
-                            </div>
-                            <button className="btn btn-sm btn-outline-secondary">
-                                <i className="ion-plus-round"></i>
-                                &nbsp;
-                                Follow Eric Simons <span className="counter">(10)</span>
-                            </button>
-                            &nbsp;&nbsp;
-                            <button className="btn btn-sm btn-outline-primary">
-                                <i className="ion-heart"></i>
-                                &nbsp;
-                                Favorite Post <span className="counter">(29)</span>
-                            </button>
-                        </div>
+                        <h1>{title}</h1>
+                        <ArticleMeta article={this.state.article}/>
                     </div>
                 </div>
 
@@ -32,36 +37,14 @@ class Article extends Component {
 
                     <div className="row article-content">
                         <div className="col-md-12">
-                            <p>
-                                Web development technologies have evolved at an incredible clip over the past few years.
-                            </p>
-                            <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-                            <p>It's a great solution for learning how other frameworks work.</p>
+                            <p>{body}</p>
                         </div>
                     </div>
 
                     <hr />
 
                     <div className="article-actions">
-                        <div className="article-meta">
-                            <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                            <div className="info">
-                                <a href="" className="author">Eric Simons</a>
-                                <span className="date">January 20th</span>
-                            </div>
-
-                            <button className="btn btn-sm btn-outline-secondary">
-                                <i className="ion-plus-round"></i>
-                                &nbsp;
-                                Follow Eric Simons <span className="counter">(10)</span>
-                            </button>
-                            &nbsp;
-                            <button className="btn btn-sm btn-outline-primary">
-                                <i className="ion-heart"></i>
-                                &nbsp;
-                                Favorite Post <span className="counter">(29)</span>
-                            </button>
-                        </div>
+                        <ArticleMeta article={this.state.article}/>
                     </div>
 
                     <div className="row">

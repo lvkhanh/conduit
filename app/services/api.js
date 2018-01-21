@@ -116,6 +116,19 @@ var api = {
                 headers: withAuthHeader(token)
             })
             .then(response => response.data.article);
+    },
+
+    getArticle (token, slug) {
+        let articleEndpoint = getEndPoint(`articles/${slug}`),
+            params = {};
+        if (token) {
+            params = {
+                headers: withAuthHeader(token)
+            };
+        }
+        return axios
+            .get(articleEndpoint, params)
+            .then(response => response.data.article);
     }
 };
 

@@ -22,6 +22,8 @@
 
         Like/Unlike an article
 
+        View article
+
 
 
 https://github.com/gothinkster/realworld/tree/master/api
