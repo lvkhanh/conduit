@@ -1,62 +1,48 @@
 import React, { Component, PureComponent } from 'react';
+import Token from './services/token';
 import Feeds from './Feeds';
 import Tags from './Tags';
+import Tabs, {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID}  from './Tabs';
 
 class Home extends PureComponent {
     constructor(props) {
         super(props);
-
+        this.token = Token.get();
         this.state = {
-            isYourFeed: true
+            activeFeed: this.token ? YOUR_FEED_UNI_ID : GLOBAL_FEED_UNI_ID
         };
 
-        this.handleFeedClick = this.handleFeedClick.bind(this);
-
-        console.log('Home constructor');
+        this.handleTagClick = this.handleTagClick.bind(this);
     }
 
-    handleFeedClick (e) {
-        let {id} = e.target,
-            isYourFeed;
-        if (id === 'yourFeed') {
-            isYourFeed = true;
-        } else {
-            isYourFeed = false;
-        }
-        this.setState({isYourFeed});
+    handleTagClick (activeFeed) {
+        this.setState({
+            activeFeed
+        });
     }
 
     render() {
-        console.log('Home render');
         return (
             <div className="home-page">
-                <div className="banner">
-                    <div className="container">
-                        <h1 className="logo-font">conduit</h1>
-                        <p>A place to share your knowledge.</p>
+                {
+                    !this.token &&
+                    <div className="banner">
+                        <div className="container">
+                            <h1 className="logo-font">conduit</h1>
+                            <p>A place to share your knowledge.</p>
+                        </div>
                     </div>
-                </div>
+                }
 
                 <div className="container page">
                     <div className="row">
 
                         <div className="col-md-9">
-                            <div className="feed-toggle">
-                                <ul className="nav nav-pills outline-active">
-                                    <li className="nav-item">
-                                        <a id="yourFeed" className={`nav-link ${this.state.isYourFeed ? 'active' : 'disabled' }`} href="#" onClick={this.handleFeedClick}>Your Feed</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a id="globalFeed" className={`nav-link ${this.state.isYourFeed ? 'disabled' : 'active' }`} href="#" onClick={this.handleFeedClick}>Global Feed</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <Feeds/>
-
+                            <Tabs activeFeed={this.state.activeFeed} handleTabClick={this.handleTagClick}/>
+                            <Feeds activeFeed={this.state.activeFeed}/>
                         </div>
 
-                        <Tags/>
+                        <Tags handleTagClick={this.handleTagClick}/>
                     </div>
                 </div>
             </div>

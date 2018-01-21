@@ -1,52 +1,136 @@
-import React, {Component} from 'react';
+import React, {PureComponent, Component} from 'react';
+import {Link} from 'react-router-dom';
+import moment from 'moment';
+import Api from './services/api';
+import Token from './services/token';
+
+import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
+
+const LIMIT = {
+    limit: 10
+};
 
 class Feeds extends Component {
 
-    componentDidMount () {
+    constructor (props) {
+        super(props);
+        this.token = Token.get();
+        this.state = {
+            articles: [],
+            loading: true
+        }
+    }
 
+    componentDidMount () {
+        this._getFeeds(this.props);
+    }
+
+    componentWillReceiveProps ({activeFeed}) {
+        this.setState({
+            articles: [],
+            loading: true
+        });
+        this._getFeeds({activeFeed});
+    }
+
+    _getFeeds ({activeFeed}) {
+        if (!activeFeed) return;
+
+        let getFeeds;
+
+        if (activeFeed === YOUR_FEED_UNI_ID) {
+            getFeeds = Api.articlesFeed(this.token, LIMIT);
+        } else if (activeFeed === GLOBAL_FEED_UNI_ID) {
+            getFeeds = Api.articlesList(LIMIT)
+        } else {
+            getFeeds = Api.articlesList({
+                ...LIMIT,
+                tag: activeFeed
+            });
+        }
+
+        getFeeds.then(response => {
+            this.setState({
+                articles: response.articles,
+                loading: false
+            })
+        })
     }
 
     render () {
+        if (this.state.loading) {
+            return (
+                <div className="article-preview">
+                    Loading articles...
+                </div>
+            );
+        }
+
+        if (!this.state.articles.length) {
+            return (
+                <div className="article-preview">
+                    No articles are here... yet.
+                </div>
+            );
+        }
+
         return (
             <div>
-                <div className="article-preview">
-                    <div className="article-meta">
-                        <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                        <div className="info">
-                            <a href="" className="author">Eric Simons</a>
-                            <span className="date">January 20th</span>
+                {
+                    this.state.articles.map(article => (
+                        <div className="article-preview" key={article.slug}>
+                            <div className="article-meta">
+                                <Link to={`/author/${article.author.username}`} className="author">
+                                    <img src={article.author.image} />
+                                </Link>
+                                <div className="info">
+                                    <Link to={`/author/${article.author.username}`} className="author">{article.author.username}</Link>
+                                    <span className="date">{moment(article.createdAt).format('MMMM DD, YYYY')}</span>
+                                </div>
+                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
+                                    <i className="ion-heart"></i> {article.favoritesCount}
+                                </button>
+                            </div>
+                            <Link to={`/article/${article.slug}`} className="preview-link">
+                                <h1>{article.title}</h1>
+                                <p>{article.description}</p>
+                                <span>Read more...</span>
+                                <ul className="tag-list">
+                                    {
+                                        article.tagList.map((tag, index) => (
+                                            <li key={index} className="tag-default tag-pill tag-outline">{tag}</li>
+                                        ))
+                                    }
+                                </ul>
+                            </Link>
                         </div>
-                        <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                            <i className="ion-heart"></i> 29
-                        </button>
-                    </div>
-                    <a href="" className="preview-link">
-                        <h1>How to build webapps that scale</h1>
-                        <p>This is the description for the post.</p>
-                        <span>Read more...</span>
-                    </a>
-                </div>
-
-                <div className="article-preview">
-                    <div className="article-meta">
-                        <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                        <div className="info">
-                            <a href="" className="author">Albert Pai</a>
-                            <span className="date">January 20th</span>
-                        </div>
-                        <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                            <i className="ion-heart"></i> 32
-                        </button>
-                    </div>
-                    <a href="" className="preview-link">
-                        <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                        <p>This is the description for the post.</p>
-                        <span>Read more...</span>
-                    </a>
-                </div>
+                    ))
+                }
             </div>
         );
     }
 }
 
 export default Feeds;
+
+
+/*
+{
+    "article": {
+        "slug": "how-to-train-your-dragon",
+        "title": "How to train your dragon",
+        "description": "Ever wonder how?",
+        "body": "It takes a Jacobian",
+        "tagList": ["dragons", "training"],
+        "createdAt": "2016-02-18T03:22:56.637Z",
+        "updatedAt": "2016-02-18T03:48:35.824Z",
+        "favorited": false,
+        "favoritesCount": 0,
+        "author": {
+        "username": "jake",
+            "bio": "I work at statefarm",
+            "image": "https://i.stack.imgur.com/xHWG8.jpg",
+            "following": false
+    }
+}
+}*/

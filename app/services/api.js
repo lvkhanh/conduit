@@ -72,16 +72,20 @@ var api = {
     articlesList(params) {
         let articlesEndpoint = getEndPoint('articles');
 
-        return axios.get(articlesEndpoint, { params });
+        return axios
+            .get(articlesEndpoint, { params })
+            .then(response => response.data);
     },
 
     articlesFeed(token, params) {
         let feedEndpoint = getEndPoint('articles/feed');
 
-        return axios.get(feedEndpoint, {
-            params,
-            headers: withAuthHeader(token)
-        });
+        return axios
+            .get(feedEndpoint, {
+                params,
+                headers: withAuthHeader(token)
+            })
+            .then(response => response.data);;
     },
 
     getTags() {

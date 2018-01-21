@@ -8,10 +8,16 @@ class Tags extends PureComponent {
         this.state = {
             tags: []
         };
+
+        this.handleOnClick = this.handleOnClick.bind(this);
+    }
+
+    handleOnClick (e) {
+        e.preventDefault();
+        this.props.handleTagClick(e.target.id);
     }
 
     componentDidMount() {
-console.log('Tags didMount');
         Api
             .getTags()
             .then(tags => {
@@ -20,7 +26,6 @@ console.log('Tags didMount');
     }
 
     render () {
-console.log('Tags render');
         return (
             <div className="col-md-3">
                 <div className="sidebar">
@@ -29,7 +34,7 @@ console.log('Tags render');
                         {
                             this.state.tags.map(
                                 (tag, index) => (
-                                    <a key={index} href="" className="tag-pill tag-default">{tag}</a>
+                                    <a id={tag} key={index} href="#" className="tag-pill tag-default" onClick={this.handleOnClick}>{tag}</a>
                                 )
                             )
                         }
