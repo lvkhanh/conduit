@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import Token from './services/token';
+import Storage from './services/storage';
 import {redirectIfNotAuthenticated} from './services/auth';
 
 class Settings extends Component {
 
     handleSignOut () {
         Token.remove();
+        Storage.remove('currentUsername');
         this.props.removeUser();
         this.props.history.push('/home');
     }

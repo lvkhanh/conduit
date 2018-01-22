@@ -32,6 +32,7 @@
     * Add /profile and /register route
     * Add Setting element after logging in
     * Set active header item
+    * Save currentUsername to localStorage after signing in and remove after signing out
     * Edit/Delete article
 
 
