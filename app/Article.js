@@ -3,6 +3,14 @@ import Api from './services/api';
 import Token from './services/token';
 import ArticleMeta from './ArticleMeta';
 
+const ArticleContent = ({body}) => (
+    <div className="row article-content">
+        <div className="col-md-12">
+            <p>{body}</p>
+        </div>
+    </div>
+);
+
 class Article extends Component {
 
     constructor (props) {
@@ -10,7 +18,8 @@ class Article extends Component {
         this.token = Token.get();
         this.state = {
             article: {}
-        }
+        };
+        this.handleChangeArticle = this.handleChangeArticle.bind(this);
     }
 
     componentDidMount () {
@@ -22,6 +31,10 @@ class Article extends Component {
             })
     }
 
+    handleChangeArticle (article) {
+        this.setState({article});
+    }
+
     render () {
         let {title, body} = this.state.article;
         return (
@@ -29,22 +42,15 @@ class Article extends Component {
                 <div className="banner">
                     <div className="container">
                         <h1>{title}</h1>
-                        <ArticleMeta article={this.state.article}/>
+                        <ArticleMeta article={this.state.article} onChange={this.handleChangeArticle}/>
                     </div>
                 </div>
 
                 <div className="container page">
-
-                    <div className="row article-content">
-                        <div className="col-md-12">
-                            <p>{body}</p>
-                        </div>
-                    </div>
-
+                    <ArticleContent body={body}/>
                     <hr />
-
                     <div className="article-actions">
-                        <ArticleMeta article={this.state.article}/>
+                        <ArticleMeta article={this.state.article} onChange={this.handleChangeArticle}/>
                     </div>
 
                     <div className="row">

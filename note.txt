@@ -22,7 +22,8 @@
 
         Like/Unlike an article
 
-        View article
+        View article: [un]follow, [un]like
+
 
 
 

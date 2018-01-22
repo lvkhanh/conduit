@@ -2,7 +2,6 @@ import React, {PureComponent, Component} from 'react';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
 import Api from './services/api';
-import Token from './services/token';
 import Handle from './services/handle';
 
 import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
@@ -15,7 +14,6 @@ class Feeds extends Component {
 
     constructor (props) {
         super(props);
-        this.token = Token.get();
         this.state = {
             articles: [],
             loading: true
@@ -43,11 +41,11 @@ class Feeds extends Component {
         let getFeeds;
 
         if (activeFeed === YOUR_FEED_UNI_ID) {
-            getFeeds = Api.articlesFeed(this.token, LIMIT);
+            getFeeds = Api.articlesFeed(LIMIT);
         } else if (activeFeed === GLOBAL_FEED_UNI_ID) {
-            getFeeds = Api.articlesList(this.token, LIMIT)
+            getFeeds = Api.articlesList(LIMIT)
         } else {
-            getFeeds = Api.articlesList(this.token, {
+            getFeeds = Api.articlesList({
                 ...LIMIT,
                 tag: activeFeed
             });
@@ -62,7 +60,7 @@ class Feeds extends Component {
     }
 
     handleFavorite (e, a) {
-        Handle.favorite(e, a, this.token, article => {
+        Handle.favorite(e, a, article => {
             this.setState({
                 articles: this.state.articles.map(_article => {
                     if (_article.slug === article.slug) {

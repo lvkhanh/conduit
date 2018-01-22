@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Token from './token';
 
 const SERVER = 'https://conduit.productionready.io/api/';
 
@@ -58,19 +59,30 @@ var api = {
     },
 
     followUser(username) {
-        let followEndpoint = getEndPoint(`profiles/${username}/follow`);
+        let token = Token.get(),
+            followEndpoint = getEndPoint(`profiles/${username}/follow`);
 
-        return axios.post(followEndpoint);
+        return axios
+            .post(followEndpoint, null, {
+                headers: withAuthHeader(token)
+            })
+            .then(response => response.data.profile);
     },
 
     unfollowUser(username) {
-        let followEndpoint = getEndPoint(`profiles/${username}/follow`);
+        let token = Token.get(),
+            followEndpoint = getEndPoint(`profiles/${username}/follow`);
 
-        return axios.delete(followEndpoint);
+        return axios
+            .delete(followEndpoint, {
+                headers: withAuthHeader(token)
+            })
+            .then(response => response.data.profile);
     },
 
-    articlesList(token, params) {
-        let articlesEndpoint = getEndPoint('articles');
+    articlesList(params) {
+        let token = Token.get(),
+            articlesEndpoint = getEndPoint('articles');
 
         if (token) {
             params = {
@@ -84,8 +96,9 @@ var api = {
             .then(response => response.data);
     },
 
-    articlesFeed(token, params) {
-        let feedEndpoint = getEndPoint('articles/feed');
+    articlesFeed(params) {
+        let token = Token.get(),
+            feedEndpoint = getEndPoint('articles/feed');
 
         return axios
             .get(feedEndpoint, {
@@ -100,20 +113,20 @@ var api = {
                     .then(response => response.data.tags);
     },
 
-    favoriteArticle(token, slug) {
+    favoriteArticle(slug) {
         let favoriteEndpoint = getEndPoint(`articles/${slug}/favorite`);
         return axios
             .post(favoriteEndpoint, null, {
-                headers: withAuthHeader(token)
+                headers: withAuthHeader(Token.get())
             })
             .then(response => response.data.article);
     },
 
-    unfavoriteArticle(token, slug) {
+    unfavoriteArticle(slug) {
         let unfavoriteEndpoint = getEndPoint(`articles/${slug}/favorite`);
         return axios
             .delete(unfavoriteEndpoint, {
-                headers: withAuthHeader(token)
+                headers: withAuthHeader(Token.get())
             })
             .then(response => response.data.article);
     },
@@ -123,7 +136,7 @@ var api = {
             params = {};
         if (token) {
             params = {
-                headers: withAuthHeader(token)
+                headers: withAuthHeader(Token.get())
             };
         }
         return axios
