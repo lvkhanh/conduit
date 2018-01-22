@@ -22,7 +22,13 @@
 
         Like/Unlike an article
 
-        View article: [un]follow, [un]like
+        View article
+
+2017-01-21
+    * View article: [un]follow, [un]like
+    * Redirect to '/login' if [un]follow, [un]like without token
+    * Add /profile and /register route
+    * Add setting element
 
 
 

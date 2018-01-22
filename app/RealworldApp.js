@@ -5,12 +5,13 @@ import Header from './Header';
 import Footer from './Footer';
 
 // pages
-import Home from './Home';
-import Register from './Register';
-import SignIn from './SignIn';
-import Article from './Article';
-import EditArticle from './EditArticle';
-import Settings from './Settings';
+import Home         from './Home';
+import Register     from './Register';
+import SignIn       from './SignIn';
+import Profile      from './Profile';
+import Article      from './Article';
+import Settings     from './Settings';
+import EditArticle  from './EditArticle';
 
 import Token from './services/token';
 import Api from './services/api';
@@ -74,6 +75,8 @@ class RealworldApp extends Component {
                         <Route path="/settings" component={withProps({user, removeUser})(Settings)} />
                         <Route path="/article/view/:id"   component={Article} />
                         <Route path="/article/edit/:id"   component={EditArticle} />
+                        <Route path="/profile/:username" component={Profile} />
+                        <Route path="/register" component={Register} />
                         <Redirect to="/" />
                     </Switch>
                 </div>

@@ -1,5 +1,5 @@
 import React, {PureComponent, Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import moment from 'moment';
 import Api from './services/api';
 import Handle from './services/handle';
@@ -60,7 +60,7 @@ class Feeds extends Component {
     }
 
     handleFavorite (e, a) {
-        Handle.favorite(e, a, article => {
+        Handle.favorite(e, this.props.history.push, a, article => {
             this.setState({
                 articles: this.state.articles.map(_article => {
                     if (_article.slug === article.slug) {
@@ -96,11 +96,11 @@ class Feeds extends Component {
                     this.state.articles.map(article => (
                         <div className="article-preview" key={article.slug}>
                             <div className="article-meta">
-                                <Link to={`/author/${article.author.username}`} className="author">
+                                <Link to={`/profile/${article.author.username}`} className="author">
                                     <img src={article.author.image} />
                                 </Link>
                                 <div className="info">
-                                    <Link to={`/author/${article.author.username}`} className="author">{article.author.username}</Link>
+                                    <Link to={`/profile/${article.author.username}`} className="author">{article.author.username}</Link>
                                     <span className="date">{moment(article.createdAt).format('MMMM DD, YYYY')}</span>
                                 </div>
                                 <button className={`btn btn-sm pull-xs-right ${article.favorited ? 'btn-primary' : 'btn-outline-primary'}`} onClick={(e) => this.handleFavorite(e, article)}>
@@ -127,7 +127,7 @@ class Feeds extends Component {
     }
 }
 
-export default Feeds;
+export default withRouter(Feeds);
 
 
 /*

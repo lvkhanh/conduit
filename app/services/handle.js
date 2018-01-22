@@ -3,11 +3,11 @@ import Token from './token';
 
 
 const handle = {
-    favorite (event, article, callback) {
+    favorite (event, push, article, callback) {
         event.preventDefault();
 
         let token = Token.get();
-        if (!token) return;
+        if (!token) return push('/login');
 
         let {slug, favorited} = article,
             exec;
@@ -20,11 +20,11 @@ const handle = {
         exec.then(callback);
     },
 
-    followUser (event, article, callback) {
+    followUser (event, push, article, callback) {
         event.preventDefault();
 
         let token = Token.get();
-        if (!token) return;
+        if (!token) return push('/login');
 
         let {author: {username, following}} = article,
             exec;
@@ -35,7 +35,7 @@ const handle = {
         }
         exec.then(callback);
     }
-}
+};
 
 export default handle;
 

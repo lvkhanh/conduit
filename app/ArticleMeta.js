@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import {withRouter} from 'react-router-dom';
 import moment from 'moment';
 import Handle from './services/handle';
 
@@ -12,7 +13,7 @@ class FollowButton extends PureComponent {
     }
 
     handleClick (e) {
-        Handle.followUser(e, this.props.article, profile => {
+        Handle.followUser(e, this.props.history.push, this.props.article, profile => {
             let article = {...this.props.article};
             article.author.following = profile.following;
             this.props.onClick(article);
@@ -46,7 +47,7 @@ class FollowButton extends PureComponent {
 class FavoriteButton extends PureComponent {
 
     handleClick (e) {
-        Handle.favorite(e, this.props.article, this.props.onClick);
+        Handle.favorite(e, this.props.history.push, this.props.article, this.props.onClick);
     }
 
     render () {
@@ -82,15 +83,18 @@ class ArticleMeta extends PureComponent {
             <div className="article-meta">
                 <a href="#"><img src={image} /></a>
                 <div className="info">
-                    <a href="#" className="author">{username}</a>
+                    <a href={`/profile/${username}`} className="author">{username}</a>
                     <span className="date">{moment(createdAt).format('MMMM DD, YYYY')}</span>
                 </div>
-                <FollowButton article={this.state.article} onClick={this.props.onChange}/>
+                <FollowButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
                 &nbsp;&nbsp;
-                <FavoriteButton article={this.state.article} onClick={this.props.onChange}/>
+                <FavoriteButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
             </div>
         );
     }
 }
+
+const FollowButtonWithRouter = withRouter(FollowButton);
+const FavoriteButtonWithRouter = withRouter(FavoriteButton);
 
 export default ArticleMeta;

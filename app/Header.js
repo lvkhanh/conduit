@@ -3,12 +3,19 @@ import { Link } from 'react-router-dom';
 
 const Header = ({user, loading}) => {
 
-    let infoEle, signInEle, signUpEle;
+    let settingEle, infoEle, signInEle, signUpEle;
 
     if (user) {
-        infoEle = (
+        settingEle = (
             <li className="nav-item">
                 <Link to="/settings" className="nav-link">
+                    Settings
+                </Link>
+            </li>
+        );
+        infoEle = (
+            <li className="nav-item">
+                <Link to={`/profile/${user.username}`} className="nav-link">
                     {user.username}
                 </Link>
             </li>
@@ -48,6 +55,7 @@ const Header = ({user, loading}) => {
                             <i className="ion-compose"></i>&nbsp;New Post
                         </Link>
                     </li>
+                    {settingEle}
                     {infoEle}
                     {signInEle}
                     {signUpEle}
