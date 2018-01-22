@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Api from './services/api';
-import Token from './services/token';
 import ArticleMeta from './ArticleMeta';
 
 const ArticleContent = ({body}) => (
@@ -11,11 +10,10 @@ const ArticleContent = ({body}) => (
     </div>
 );
 
-class Article extends Component {
+class Article extends PureComponent {
 
     constructor (props) {
         super(props);
-        this.token = Token.get();
         this.state = {
             article: {}
         };
@@ -25,10 +23,10 @@ class Article extends Component {
     componentDidMount () {
         let id = this.props.match.params.id;
         Api
-            .getArticle(this.token, id)
+            .getArticle(id)
             .then(article => {
                 this.setState({article});
-            })
+            });
     }
 
     handleChangeArticle (article) {
@@ -42,7 +40,7 @@ class Article extends Component {
                 <div className="banner">
                     <div className="container">
                         <h1>{title}</h1>
-                        <ArticleMeta article={this.state.article} onChange={this.handleChangeArticle}/>
+                        <ArticleMeta article={this.state.article} currentUser={this.props.user} onChange={this.handleChangeArticle}/>
                     </div>
                 </div>
 
@@ -50,56 +48,10 @@ class Article extends Component {
                     <ArticleContent body={body}/>
                     <hr />
                     <div className="article-actions">
-                        <ArticleMeta article={this.state.article} onChange={this.handleChangeArticle}/>
+                        <ArticleMeta article={this.state.article} currentUser={this.props.user} onChange={this.handleChangeArticle}/>
                     </div>
 
-                    <div className="row">
-                        <div className="col-xs-12 col-md-8 offset-md-2">
-                            <form className="card comment-form">
-                                <div className="card-block">
-                                    <textarea className="form-control" placeholder="Write a comment..." rows="3"></textarea>
-                                </div>
-                                <div className="card-footer">
-                                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                    <button className="btn btn-sm btn-primary">
-                                        Post Comment
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div className="card">
-                                <div className="card-block">
-                                    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                </div>
-                                <div className="card-footer">
-                                    <a href="" className="comment-author">
-                                        <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                    </a>
-                                    &nbsp;
-                                    <a href="" className="comment-author">Jacob Schmidt</a>
-                                    <span className="date-posted">Dec 29th</span>
-                                </div>
-                            </div>
-
-                            <div className="card">
-                                <div className="card-block">
-                                    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                </div>
-                                <div className="card-footer">
-                                    <a href="" className="comment-author">
-                                        <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                    </a>
-                                    &nbsp;
-                                    <a href="" className="comment-author">Jacob Schmidt</a>
-                                    <span className="date-posted">Dec 29th</span>
-                                    <span className="mod-options">
-                                        <i className="ion-edit"></i>
-                                        <i className="ion-trash-a"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {/*<CommentSection/>*/}
                 </div>
             </div>
         );
@@ -107,3 +59,53 @@ class Article extends Component {
 }
 
 export default Article;
+
+const CommentSection = () => (
+    <div className="row">
+        <div className="col-xs-12 col-md-8 offset-md-2">
+            <form className="card comment-form">
+                <div className="card-block">
+                    <textarea className="form-control" placeholder="Write a comment..." rows="3"></textarea>
+                </div>
+                <div className="card-footer">
+                    <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
+                    <button className="btn btn-sm btn-primary">
+                        Post Comment
+                    </button>
+                </div>
+            </form>
+
+            <div className="card">
+                <div className="card-block">
+                    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                </div>
+                <div className="card-footer">
+                    <a href="" className="comment-author">
+                        <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
+                    </a>
+                    &nbsp;
+                    <a href="" className="comment-author">Jacob Schmidt</a>
+                    <span className="date-posted">Dec 29th</span>
+                </div>
+            </div>
+
+            <div className="card">
+                <div className="card-block">
+                    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                </div>
+                <div className="card-footer">
+                    <a href="" className="comment-author">
+                        <img src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
+                    </a>
+                    &nbsp;
+                    <a href="" className="comment-author">Jacob Schmidt</a>
+                    <span className="date-posted">Dec 29th</span>
+                    <span className="mod-options">
+                        <i className="ion-edit"></i>
+                        <i className="ion-trash-a"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+);

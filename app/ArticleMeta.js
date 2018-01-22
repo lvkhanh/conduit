@@ -1,67 +1,8 @@
-import React, { PureComponent } from 'react';
-import {Link, withRouter} from 'react-router-dom';
-import moment from 'moment';
-import Handle from './services/handle';
-
-class FollowButton extends PureComponent {
-    constructor (props) {
-        super(props);
-        let {article: {author = {}}} = props;
-        this.state = {
-            following: author.following
-        }
-    }
-
-    handleClick (e) {
-        Handle.followUser(e, this.props.history.push, this.props.article, profile => {
-            let article = {...this.props.article};
-            article.author.following = profile.following;
-            this.props.onClick(article);
-        });
-    }
-
-    render () {
-        let {author = {}} = this.props.article,
-            {username, following = false} = author,
-            text, buttonClass, iconClass;
-
-        if (following) {
-            text = 'Unfollow';
-            buttonClass = 'btn-secondary';
-            iconClass = 'ion-minus-round';
-        } else {
-            text = 'Follow';
-            buttonClass = 'btn-outline-secondary';
-            iconClass = 'ion-plus-round';
-        }
-        return (
-            <button className={`btn btn-sm ${buttonClass}`} onClick={this.handleClick.bind(this)}>
-                <i className={iconClass}></i>
-                &nbsp;
-                {text} {username}
-            </button>
-        );
-    }
-}
-
-class FavoriteButton extends PureComponent {
-
-    handleClick (e) {
-        Handle.favorite(e, this.props.history.push, this.props.article, this.props.onClick);
-    }
-
-    render () {
-        let {favorited, favoritesCount} = this.props.article;
-        return (
-            <button className={`btn btn-sm ${favorited ? 'btn-primary' : 'btn-outline-primary'}`} onClick={this.handleClick.bind(this)}>
-                <i className="ion-heart"></i>
-                &nbsp;
-                {favorited ? 'Unfavorite' : 'Favorite'} Article
-                <span className="counter">({favoritesCount})</span>
-            </button>
-        );
-    }
-}
+import React, {PureComponent, Fragment} from "react";
+import {Link} from "react-router-dom";
+import moment from "moment";
+import Storage from  './services/storage';
+import {FavoriteButtonWithRouter, FollowButtonWithRouter, RemoveButtonWithRouter, EditButton} from './Buttons'
 
 class ArticleMeta extends PureComponent {
 
@@ -78,7 +19,27 @@ class ArticleMeta extends PureComponent {
 
     render () {
         let {createdAt, author = {}} = this.state.article,
-            {image = '', username = ''} = author;
+            {image = '', username = ''} = author,
+            groupButtonEle;
+
+        if (Storage.get('currentUsername') === username) {
+            groupButtonEle = (
+                <Fragment>
+                    <EditButton article={this.state.article}/>
+                    &nbsp;&nbsp;
+                    <RemoveButtonWithRouter article={this.state.article}/>
+                </Fragment>
+            );
+        } else if (username !== '') {
+            groupButtonEle = (
+                <Fragment>
+                    <FollowButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
+                    &nbsp;&nbsp;
+                    <FavoriteButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
+                </Fragment>
+            );
+        }
+
         return (
             <div className="article-meta">
                 <Link to={`/profile/${username}`}><img src={image} /></Link>
@@ -86,15 +47,10 @@ class ArticleMeta extends PureComponent {
                     <Link to={`/profile/${username}`} className="author">{username}</Link>
                     <span className="date">{moment(createdAt).format('MMMM DD, YYYY')}</span>
                 </div>
-                <FollowButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
-                &nbsp;&nbsp;
-                <FavoriteButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
+                {this.state.article && groupButtonEle}
             </div>
         );
     }
 }
-
-const FollowButtonWithRouter = withRouter(FollowButton);
-const FavoriteButtonWithRouter = withRouter(FavoriteButton);
 
 export default ArticleMeta;

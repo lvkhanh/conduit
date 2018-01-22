@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import Token from  './services/token';
+import Storage from  './services/storage';
 import Api from  './services/api';
 
 class SignIn extends Component {
@@ -20,8 +21,9 @@ class SignIn extends Component {
                 password: this.passwordInput.value
             })
             .then(user => {
-                let {token} = user;
+                let {token, username} = user;
                 Token.set(token);
+                Storage.set('currentUsername', username);
 
                 this.props.setUser(user);
 

@@ -105,7 +105,7 @@ var api = {
                 params,
                 headers: withAuthHeader(token)
             })
-            .then(response => response.data);;
+            .then(response => response.data);
     },
 
     getTags() {
@@ -131,16 +131,44 @@ var api = {
             .then(response => response.data.article);
     },
 
-    getArticle (token, slug) {
-        let articleEndpoint = getEndPoint(`articles/${slug}`),
+    getArticle (slug) {
+        let token = Token.get(),
+            articleEndpoint = getEndPoint(`articles/${slug}`),
             params = {};
         if (token) {
             params = {
-                headers: withAuthHeader(Token.get())
+                headers: withAuthHeader(token)
             };
         }
         return axios
             .get(articleEndpoint, params)
+            .then(response => response.data.article);
+    },
+
+    createArticle (article) {
+        let endpoint = getEndPoint('/articles');
+        return axios
+            .post(endpoint, article, {
+                headers: withAuthHeader(Token.get())
+            })
+            .then(response => response.data.article);
+    },
+
+    updateArticle (slug, article) {
+        let endpoint = getEndPoint(`/articles/${slug}`);
+        return axios
+            .put(endpoint, article, {
+                headers: withAuthHeader(Token.get())
+            })
+            .then(response => response.data.article);
+    },
+
+    deleteArticle (slug) {
+        let endpoint = getEndPoint(`/articles/${slug}`);
+        return axios
+            .delete(endpoint, {
+                headers: withAuthHeader(Token.get())
+            })
             .then(response => response.data.article);
     }
 };
