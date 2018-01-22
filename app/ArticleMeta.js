@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import {withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import moment from 'moment';
 import Handle from './services/handle';
 
@@ -81,9 +81,9 @@ class ArticleMeta extends PureComponent {
             {image = '', username = ''} = author;
         return (
             <div className="article-meta">
-                <a href="#"><img src={image} /></a>
+                <Link to={`/profile/${username}`}><img src={image} /></Link>
                 <div className="info">
-                    <a href={`/profile/${username}`} className="author">{username}</a>
+                    <Link to={`/profile/${username}`} className="author">{username}</Link>
                     <span className="date">{moment(createdAt).format('MMMM DD, YYYY')}</span>
                 </div>
                 <FollowButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>

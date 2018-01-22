@@ -71,12 +71,15 @@ class RealworldApp extends Component {
                 <div className="content">
                     <Switch>
                         <Route path="/" exact   component={Home} />
-                        <Route path="/login"    component={withProps({setUser})(SignIn)} />
-                        <Route path="/settings" component={withProps({user, removeUser})(Settings)} />
-                        <Route path="/article/view/:id"   component={Article} />
-                        <Route path="/article/edit/:id"   component={EditArticle} />
-                        <Route path="/profile/:username" component={Profile} />
+                        <Route path="/login" exact   component={withProps({setUser})(SignIn)} />
+                        <Route path="/settings" exact component={withProps({user, removeUser})(Settings)} />
+                        <Route path="/profile/:username" exact component={Profile} />
                         <Route path="/register" component={Register} />
+
+                        <Route path="/article/view/:id"     component={Article} />
+                        <Route path="/article/new"          component={EditArticle} />
+                        <Route path="/article/edit/:id"     component={EditArticle} />
+
                         <Redirect to="/" />
                     </Switch>
                 </div>

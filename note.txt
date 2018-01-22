@@ -27,10 +27,11 @@
 2017-01-21
     * View article: [un]follow, [un]like
     * Redirect to '/login' if [un]follow, [un]like without token
+
+2017-01-22
     * Add /profile and /register route
-    * Add setting element
-
-
+    * Add Setting element after logging in
+    * Set active header item
 
 
 https://github.com/gothinkster/realworld/tree/master/api
