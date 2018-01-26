@@ -20,14 +20,13 @@ const handle = {
         exec.then(callback);
     },
 
-    followUser (event, push, article, callback) {
+    followUser (event, push, username, following, callback) {
         event.preventDefault();
 
         let token = Token.get();
         if (!token) return push('/login');
 
-        let {author: {username, following}} = article,
-            exec;
+        let exec;
         if (following) {
             exec = Api.unfollowUser(username);
         } else {

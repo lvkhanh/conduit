@@ -1,7 +1,34 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import {withRouter, Link} from 'react-router-dom';
+import Api from './services/api';
+import Storage from './services/storage';
+import {FollowButton} from './Buttons';
 
-class Profile extends Component {
+
+class Profile extends PureComponent {
+
+    constructor (props) {
+        super(props);
+        this.state = {
+            profile: {}
+        };
+    }
+
+    componentDidMount () {
+        let {username} = this.props.match.params;
+        Api
+            .getProfile(username)
+            .then(profile => this.setState({
+                profile
+            }));
+    }
+
+    handleFollow (profile) {
+        this.setState({profile});
+    }
+
     render() {
+        let {username = this.props.match.params.username, bio, image, following} = this.state.profile;
         return (
             <div className="profile-page">
                 <div className="user-info">
@@ -9,16 +36,17 @@ class Profile extends Component {
                         <div className="row">
 
                             <div className="col-xs-12 col-md-10 offset-md-1">
-                                <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" />
-                                <h4>Eric Simons</h4>
-                                <p>
-                                    Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the Hunger Games
-                                </p>
-                                <button className="btn btn-sm btn-outline-secondary action-btn">
-                                    <i className="ion-plus-round"></i>
-                                    &nbsp;
-                                    Follow Eric Simons
-                                </button>
+                                <img src={image} className="user-img" />
+                                <h4>{username}</h4>
+                                <p>{bio}</p>
+                                {
+                                    Storage.getCurrentUser() === username ?
+                                        <Link to="/settings" className="btn btn-sm btn-outline-secondary action-btn">
+                                            <i className="ion-gear-a"></i>
+                                            Edit Profile Settings
+                                        </Link> :
+                                        <FollowButton following={following} username={username} history={this.props.history} extraClassName="action-btn"/>
+                                }
                             </div>
 
                         </div>
@@ -49,7 +77,7 @@ class Profile extends Component {
                                     </div>
                                     <button className="btn btn-outline-primary btn-sm pull-xs-right">
                                         <i className="ion-heart"></i> 29
-            </button>
+                                    </button>
                                 </div>
                                 <a href="" className="preview-link">
                                     <h1>How to build webapps that scale</h1>
@@ -87,4 +115,4 @@ class Profile extends Component {
     }
 }
 
-export default Profile;
+export default withRouter(Profile);

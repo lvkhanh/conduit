@@ -46,16 +46,29 @@ var api = {
             image,
             bio
         } = user;
-
-        return axios.put(getEndPoint('user'), {
-            user: { email, username, password, image, bio }
-        });
+        return axios
+            .put(getEndPoint('user'), {
+                user: { email, username, password, image, bio }
+            }, {
+                headers: withAuthHeader(Token.get())
+            })
+            .then(response => response.data.user);
     },
 
     getProfile(username) {
-        let profileEndpoint = getEndPoint(`profiles/${username}`);
+        let token = Token.get(),
+            params = {},
+            profileEndpoint = getEndPoint(`profiles/${username}`);
 
-        return axios.get(profileEndpoint);
+        if (token) {
+            params = {
+                headers: withAuthHeader(token)
+            }
+        }
+
+        return axios
+            .get(profileEndpoint, params)
+            .then(response => response.data.profile);
     },
 
     followUser(username) {

@@ -72,7 +72,7 @@ class RealworldApp extends Component {
                     <Switch>
                         <Route path="/" exact   component={Home} />
                         <Route path="/login" exact   component={withProps({setUser})(SignIn)} />
-                        <Route path="/settings" exact component={withProps({user, removeUser})(Settings)} />
+                        <Route path="/settings" exact component={withProps({user, setUser, removeUser})(Settings)} />
                         <Route path="/profile/:username" exact component={Profile} />
                         <Route path="/register" component={Register} />
 

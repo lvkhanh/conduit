@@ -1,11 +1,11 @@
-2017-01-18
+2018-01-18
 - SignIn:
     * use 'ref' instead of onChange
     * history.push('/home') instead of Redirect
 - RealworldApp:
     * withProps HoC
 
-2017-01-20
+2018-01-20
     * fill user info to input in Settings.js
     * redirectIfNotAuth, /settings -> /login
     * only fetch '/tags' once
@@ -24,17 +24,21 @@
 
         View article
 
-2017-01-21
+2018-01-21
     * View article: [un]follow, [un]like
     * Redirect to '/login' if [un]follow, [un]like without token
 
-2017-01-22
+2018-01-22
     * Add /profile and /register route
     * Add Setting element after logging in
     * Set active header item
     * Save currentUsername to localStorage after signing in and remove after signing out
     * Edit/Delete article
 
+2018-01-26
+    * impl Profile
+    * refactor 'FollowButton' to use in Article and Profile
+    * able to update Setting
 
 https://github.com/gothinkster/realworld/tree/master/api
 
