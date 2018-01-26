@@ -1,0 +1,63 @@
+2017-01-18
+- SignIn:
+    * use 'ref' instead of onChange
+    * history.push('/home') instead of Redirect
+- RealworldApp:
+    * withProps HoC
+
+2017-01-20
+    * fill user info to input in Settings.js
+    * redirectIfNotAuth, /settings -> /login
+    * only fetch '/tags' once
+    * fetch in componentDidMount and componentWillReceiveProps in Feeds.js
+    * add babel plugins for spread operator
+    * impl Home page
+         Load personal articles, for authenticated user
+
+         Load global articles
+
+         Handle feeds for tag, when select a tag
+             New tab should be added
+             Articles of selected tag should be loaded accordingly
+
+        Like/Unlike an article
+
+        View article
+
+2017-01-21
+    * View article: [un]follow, [un]like
+    * Redirect to '/login' if [un]follow, [un]like without token
+
+2017-01-22
+    * Add /profile and /register route
+    * Add Setting element after logging in
+    * Set active header item
+    * Save currentUsername to localStorage after signing in and remove after signing out
+    * Edit/Delete article
+
+
+https://github.com/gothinkster/realworld/tree/master/api
+
+
+
+
+Home page
+    Load personal articles, for authenticated user
+
+    Load global articles
+
+    Handle feeds for tag, when select a tag
+        New tab should be added
+        Articles of selected tag should be loaded accordingly
+
+    Like a article
+
+Add new article
+    Support adding new article
+
+View/Edit article's details
+    Support viewing/editing article
+
+
+
+https://github.com/ReactTraining/react-router/blob/435239c8d957af85ab69d0415d08f184b9faf125/packages/react-router/docs/guides/migrating.md

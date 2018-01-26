@@ -9,6 +9,8 @@ module.exports = {
         filename: 'bundle.js'
     },
 
+    devtool: 'source-map',
+
     devServer: {
         contentBase: 'dist',
         port: 9000
