@@ -4,7 +4,7 @@ import moment from 'moment';
 import Api from './services/api';
 import Handle from './services/handle';
 
-import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Tabs';
+import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Home';
 
 const LIMIT = {
     limit: 10
