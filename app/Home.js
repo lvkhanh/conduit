@@ -1,56 +1,66 @@
 import React, { Component, PureComponent } from 'react';
 import Token from './services/token';
+import {ARTICLE_ENDPOINT, ARTICLE_FEED_ENDPOINT} from './services/api';
 import Feeds from './Feeds';
 import Tags from './Tags';
 import Tabs from './Tabs';
 
-export const YOUR_FEED_UNI_ID = 'yourFeedUniId';
-export const GLOBAL_FEED_UNI_ID = 'globalFeedUniId';
+
+
+const YOUR_FEED_UNI_ID      = 'yourFeedUniId';
+const GLOBAL_FEED_UNI_ID    = 'globalFeedUniId';
 
 class Home extends PureComponent {
     constructor(props) {
         super(props);
         this.token = Token.get();
 
-        this.DEFAULT_ITEMS = [
+        this.DEFAULT_TABS = [
             {
                 id: YOUR_FEED_UNI_ID,
                 label: 'Your Feed',
-                isDisabled: !Boolean(this.token)
+                isDisabled: !Boolean(this.token),
+                articleUrl: ARTICLE_FEED_ENDPOINT
             },
             {
                 id: GLOBAL_FEED_UNI_ID,
-                label: 'Global Feed'
+                label: 'Global Feed',
+                articleUrl: ARTICLE_ENDPOINT
             }
         ];
 
         this.state = {
-            activeFeed: this.token ? YOUR_FEED_UNI_ID : GLOBAL_FEED_UNI_ID,
-            tabItems: this.DEFAULT_ITEMS
+            tabItems: this.DEFAULT_TABS,
+            activeTabId: this.token ? YOUR_FEED_UNI_ID : GLOBAL_FEED_UNI_ID,
+            feedInfo: {
+                params: {},
+                url: this.token ? ARTICLE_FEED_ENDPOINT : ARTICLE_ENDPOINT
+            }
         };
 
         this.handleTagClick = this.handleTagClick.bind(this);
         this.handleTabClick = this.handleTabClick.bind(this);
-
     }
 
-    handleTabClick (activeItem) {
+    handleTabClick (activeTabId, url, params) {
         this.setState({
-            activeFeed: activeItem,
-            tabItems: this.DEFAULT_ITEMS
+            activeTabId,
+            tabItems: this.DEFAULT_TABS,
+            feedInfo: { params, url }
         });
     }
 
-    handleTagClick (activeFeed) {
+    handleTagClick (activeTabId, url, params) {
         this.setState({
-            activeFeed,
+            activeTabId,
             tabItems: [
-                ...this.DEFAULT_ITEMS,
+                ...this.DEFAULT_TABS,
                 {
-                    id: activeFeed,
-                    label: `# ${activeFeed}`
+                    id: activeTabId,
+                    label: `# ${activeTabId}`
                 }
-            ]
+            ],
+            feedInfo: { params, url }
         });
     }
 
@@ -71,8 +81,8 @@ class Home extends PureComponent {
                     <div className="row">
 
                         <div className="col-md-9">
-                            <Tabs activeItem={this.state.activeFeed} handleTabClick={this.handleTabClick} items={this.state.tabItems}/>
-                            <Feeds activeFeed={this.state.activeFeed}/>
+                            <Tabs activeTabId={this.state.activeTabId} handleTabClick={this.handleTabClick} items={this.state.tabItems}/>
+                            <Feeds info={this.state.feedInfo}/>
                         </div>
 
                         <Tags handleTagClick={this.handleTagClick}/>

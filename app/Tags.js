@@ -1,5 +1,5 @@
 import React, {Component, PureComponent} from 'react';
-import Api from './services/api';
+import Api, {ARTICLE_ENDPOINT} from './services/api';
 
 class Tags extends PureComponent {
 
@@ -14,7 +14,9 @@ class Tags extends PureComponent {
 
     handleOnClick (e) {
         e.preventDefault();
-        this.props.handleTagClick(e.target.id);
+        this.props.handleTagClick(e.target.id, ARTICLE_ENDPOINT, {
+            tag: e.target.id
+        });
     }
 
     componentDidMount() {

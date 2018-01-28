@@ -4,59 +4,51 @@ import moment from 'moment';
 import Api from './services/api';
 import Handle from './services/handle';
 
-import {YOUR_FEED_UNI_ID, GLOBAL_FEED_UNI_ID} from './Home';
-
 const LIMIT = {
     limit: 10
 };
 
-class Feeds extends Component {
+class Feeds extends PureComponent {
 
     constructor (props) {
         super(props);
+console.log('Feeds constructor');
         this.state = {
             articles: [],
             loading: true
-        }
+        };
         this.handleFavorite = this.handleFavorite.bind(this);
     }
 
     componentDidMount () {
+console.log('Feeds componentDidMount');
         this._getFeeds(this.props);
     }
 
-    componentWillReceiveProps ({activeFeed}) {
-        if (this.props.activeFeed === activeFeed) return;
-
-        this.setState({
-            articles: [],
+    componentWillReceiveProps (props) {
+console.log('Feeds componentWillReceiveProps', props.info);
+        /*this.setState({
             loading: true
-        });
-        this._getFeeds({activeFeed});
+        });*/
+        this._getFeeds(props);
     }
 
-    _getFeeds ({activeFeed}) {
-        if (!activeFeed) return;
+    _getFeeds ({info: {url = undefined, params = undefined}}) {
+        if (!url || this.url === url) return;
 
-        let getFeeds;
-
-        if (activeFeed === YOUR_FEED_UNI_ID) {
-            getFeeds = Api.articlesFeed(LIMIT);
-        } else if (activeFeed === GLOBAL_FEED_UNI_ID) {
-            getFeeds = Api.articlesList(LIMIT)
-        } else {
-            getFeeds = Api.articlesList({
-                ...LIMIT,
-                tag: activeFeed
-            });
-        }
-
-        getFeeds.then(response => {
-            this.setState({
-                articles: response.articles,
-                loading: false
+        this.url = url;
+console.log('Feeds get', url);
+        Api
+            .getArticles(url, {
+                ...params,
+                ...LIMIT
             })
-        })
+            .then(response => {
+                this.setState({
+                    articles: response.articles,
+                    loading: false
+                });
+            });
     }
 
     handleFavorite (e, a) {
@@ -74,6 +66,7 @@ class Feeds extends Component {
     }
 
     render () {
+console.log('Feeds render', this.state);
         if (this.state.loading) {
             return (
                 <div className="article-preview">

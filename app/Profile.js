@@ -1,25 +1,71 @@
 import React, { PureComponent } from 'react';
 import {withRouter, Link} from 'react-router-dom';
-import Api from './services/api';
+import Api, {ARTICLE_ENDPOINT} from './services/api';
 import Storage from './services/storage';
 import {FollowButton} from './Buttons';
-
+import Tabs from './Tabs';
+import Feeds from './Feeds';
 
 class Profile extends PureComponent {
 
     constructor (props) {
         super(props);
+console.log('Profile constructor');
+        this.username = this.props.match.params.username;
+
         this.state = {
-            profile: {}
+            profile: {},
+            activeTabId: 'myArticles',
+            feedInfo: {
+                url: null,
+                params: {}
+            }
         };
+
+        this.handleTabClick = this.handleTabClick.bind(this);
+    }
+
+    createTabs () {
+        return [
+            {
+                id: 'myArticles',
+                label: 'My Articles',
+                articleUrl: `${ARTICLE_ENDPOINT}?author=${this.username}`
+            },
+            {
+                id: 'favoriteArticles',
+                label: 'Favorited Articles',
+                articleUrl: `${ARTICLE_ENDPOINT}?favorited=${this.username}`
+            }
+        ];
+    }
+
+    componentWillReceiveProps (props) {
+console.log('Profile componentWillReceiveProps', props);
+        this.username = props.match.params.username;
+        this.getProfile({
+            activeTabId: 'myArticles',
+            feedInfo: {
+                url: `${ARTICLE_ENDPOINT}?author=${this.username}`,
+                params: {}
+            }
+        });
     }
 
     componentDidMount () {
-        let {username} = this.props.match.params;
+console.log('Profile componentDidMount', this.state);
+        this.getProfile();
+    }
+
+    getProfile (extraState) {
         Api
-            .getProfile(username)
+            .getProfile(this.username)
             .then(profile => this.setState({
-                profile
+                profile,
+                ...extraState,
+                feedInfo: {
+                    url: `${ARTICLE_ENDPOINT}?author=${this.username}`
+                }
             }));
     }
 
@@ -27,8 +73,16 @@ class Profile extends PureComponent {
         this.setState({profile});
     }
 
+    handleTabClick (activeTabId, url, params) {
+        this.setState({
+            activeTabId,
+            feedInfo: { params, url }
+        });
+    }
+
     render() {
-        let {username = this.props.match.params.username, bio, image, following} = this.state.profile;
+console.log('Profile render', this.state);
+        let {username = this.username, bio, image, following} = this.state.profile;
         return (
             <div className="profile-page">
                 <div className="user-info">
@@ -57,56 +111,8 @@ class Profile extends PureComponent {
                     <div className="row">
 
                         <div className="col-xs-12 col-md-10 offset-md-1">
-                            <div className="articles-toggle">
-                                <ul className="nav nav-pills outline-active">
-                                    <li className="nav-item">
-                                        <a className="nav-link active" href="">My Articles</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="">Favorited Articles</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div className="article-preview">
-                                <div className="article-meta">
-                                    <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                                    <div className="info">
-                                        <a href="" className="author">Eric Simons</a>
-                                        <span className="date">January 20th</span>
-                                    </div>
-                                    <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                        <i className="ion-heart"></i> 29
-                                    </button>
-                                </div>
-                                <a href="" className="preview-link">
-                                    <h1>How to build webapps that scale</h1>
-                                    <p>This is the description for the post.</p>
-                                    <span>Read more...</span>
-                                </a>
-                            </div>
-
-                            <div className="article-preview">
-                                <div className="article-meta">
-                                    <a href=""><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                                    <div className="info">
-                                        <a href="" className="author">Albert Pai</a>
-                                        <span className="date">January 20th</span>
-                                    </div>
-                                    <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                        <i className="ion-heart"></i> 32
-                                    </button>
-                                </div>
-                                <a href="" className="preview-link">
-                                    <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                                    <p>This is the description for the post.</p>
-                                    <span>Read more...</span>
-                                    <ul className="tag-list">
-                                        <li className="tag-default tag-pill tag-outline">Music</li>
-                                        <li className="tag-default tag-pill tag-outline">Song</li>
-                                    </ul>
-                                </a>
-                            </div>
+                            <Tabs activeTabId={this.state.activeTabId} handleTabClick={this.handleTabClick} items={this.createTabs()}/>
+                            <Feeds info={this.state.feedInfo}/>
                         </div>
                     </div>
                 </div>
