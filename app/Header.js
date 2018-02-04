@@ -6,7 +6,7 @@ import {getCurrentUser} from './actions/currentUser';
 class Header extends PureComponent {
 
     componentDidMount() {
-        if(!this.props.user) {
+        if (!this.props.user) {
             this.props.getUser();
         }
     }

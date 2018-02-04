@@ -19,10 +19,12 @@ var api = {
 
         let loginEndpoint = getEndPoint('users/login');
 
-        return axios.post(loginEndpoint, {
-            user: { email, password }
-        })
-        .then(response => response.data.user);
+        return axios
+            .post(loginEndpoint, {
+                user: { email, password }
+            })
+            .then(response => ({ user: response.data.user }))
+            .catch(response => ({ error: response.response.data.errors }));
     },
 
     register(user) {

@@ -1,40 +1,27 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Redirect, withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
 import Token from  './services/token';
-import Storage from  './services/storage';
-import Api from  './services/api';
+
+import {getUser} from './actions/signIn';
 
 class SignIn extends Component {
 
-    constructor (props) {
-        super(props);
-        this.state = {
-            invalidInfo: false
+    handleSubmit (e) {
+        e.preventDefault();
+        this.props.signIn(this.emailInput.value, this.passwordInput.value);
+    }
+
+    componentWillReceiveProps (props) {
+        if (!props.invalidInfo) {
+            this.props.history.push('/');
         }
     }
 
-    handleSubmit (e) {
-        e.preventDefault();
-        Api
-            .login({
-                email: this.emailInput.value,
-                password: this.passwordInput.value
-            })
-            .then(user => {
-                let {token, username} = user;
-                Token.set(token);
-                Storage.set('currentUsername', username);
-
-                this.props.setUser(user);
-
-                this.props.history.push('/home');
-            })
-            .catch(e => {
-                this.setState({invalidInfo: true});
-            });
-    }
-
     render () {
+        if (Token.get()) {
+            return <Redirect to="/"/>
+        }
         return (
             <div className="auth-page">
                 <div className="container page">
@@ -46,7 +33,7 @@ class SignIn extends Component {
                                 <Link to="/register">Need an account?</Link>
                             </p>
                             {
-                                this.state.invalidInfo &&
+                                this.props.invalidInfo &&
                                 <ul className="error-messages">
                                     <li>email or password is invalid</li>
                                 </ul>
@@ -72,4 +59,15 @@ class SignIn extends Component {
     }
 }
 
-export default SignIn;
+export default withRouter(
+    connect(
+        ({invalidInfo}) => ({invalidInfo}),
+        (dispatch) => {
+            return {
+                signIn: (email, password) => {
+                    dispatch(getUser(email, password));
+                }
+            };
+        }
+    )(SignIn)
+);
