@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import Token from './services/token';
+import Api from './services/api';
 import Storage from './services/storage';
 import {redirectIfNotAuthenticated} from './services/auth';
 
 class Settings extends Component {
+
+    constructor (props) {
+        super(props);
+        this.state = {
+            user: props.user
+        };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
+    }
 
     handleSignOut () {
         Token.remove();
@@ -12,12 +22,34 @@ class Settings extends Component {
         this.props.history.push('/home');
     }
 
+    handleChange (e) {
+        let {id, value} = e.target;
+        this.setState({
+            user: {
+                ...this.state.user,
+                [id]: value
+            }
+        });
+    }
+
+    handleUpdate (e) {
+        e.preventDefault();
+        Api
+            .updateUser(this.state.user)
+            .then((user) => {
+                this.props.setUser(user);
+                this.props.history.push(`./profile/${user.username}`);
+            });
+
+    }
+
     componentWillMount () {
         redirectIfNotAuthenticated(this.props.history.push, '/login');
     }
 
-    render() {
-        const {user} = this.props;
+    render () {
+        const   {user = {}} = this.state,
+                {image = '', username = '', bio = '', email = '', password = ''} = user;
         if (!user) return null;
         return  (
             <div className="settings-page">
@@ -30,21 +62,21 @@ class Settings extends Component {
                             <form>
                                 <fieldset>
                                     <fieldset className="form-group">
-                                        <input className="form-control" type="text" placeholder="URL of profile picture" value={user.image}/>
+                                        <input id="image" className="form-control" type="text" placeholder="URL of profile picture" value={image || ''} onChange={this.handleChange}/>
                                     </fieldset>
                                     <fieldset className="form-group">
-                                        <input className="form-control form-control-lg" type="text" placeholder="Your Name" value={user.username}/>
+                                        <input id="username" className="form-control form-control-lg" type="text" placeholder="Your Name" value={username} onChange={this.handleChange}/>
                                     </fieldset>
                                     <fieldset className="form-group">
-                                        <textarea className="form-control form-control-lg" rows="8" placeholder="Short bio about you" value={user.bio}></textarea>
+                                        <textarea id="bio" className="form-control form-control-lg" rows="8" placeholder="Short bio about you" value={bio || ''} onChange={this.handleChange}></textarea>
                                     </fieldset>
                                     <fieldset className="form-group">
-                                        <input className="form-control form-control-lg" type="text" placeholder="Email" value={user.email}/>
+                                        <input id="email" className="form-control form-control-lg" type="text" placeholder="Email" value={email} onChange={this.handleChange}/>
                                     </fieldset>
                                     <fieldset className="form-group">
-                                        <input className="form-control form-control-lg" type="password" placeholder="Password" value={user.password}/>
+                                        <input id="password" className="form-control form-control-lg" type="password" placeholder="Password" value={password} onChange={this.handleChange}/>
                                     </fieldset>
-                                    <button className="btn btn-lg btn-primary pull-xs-right">
+                                    <button className="btn btn-lg btn-primary pull-xs-right" onClick={this.handleUpdate}>
                                         Update Settings
                                     </button>
                                 </fieldset>

@@ -9,6 +9,10 @@ const Storage = {
 
     remove(key) {
         localStorage.removeItem(key);
+    },
+
+    getCurrentUser() {
+        return this.get('currentUsername');
     }
 };
 

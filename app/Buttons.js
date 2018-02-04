@@ -3,27 +3,36 @@ import Handle from "./services/handle";
 import Api from "./services/api";
 import {Link, withRouter} from "react-router-dom";
 
-
 class FollowButton extends PureComponent {
     constructor (props) {
         super(props);
-        let {article: {author = {}}} = props;
         this.state = {
-            following: author.following
-        }
+            following: props.following
+        };
     }
 
     handleClick (e) {
-        Handle.followUser(e, this.props.history.push, this.props.article, profile => {
-            let article = {...this.props.article};
-            article.author.following = profile.following;
-            this.props.onClick(article);
+        let {history, username, following} = this.props;
+        Handle.followUser(e, history.push, username, following, profile => {
+            if (this.props.onClick) {
+                this.props.onClick(profile);
+            } else {
+                this.setState({
+                    following: profile.following
+                });
+            }
+        });
+    }
+
+    componentWillReceiveProps (props) {
+        this.setState({
+            following: props.following
         });
     }
 
     render () {
-        let {author = {}} = this.props.article,
-            {username, following = false} = author,
+        let {following = false} = this.state,
+            {username} = this.props,
             text, buttonClass, iconClass;
 
         if (following) {
@@ -35,8 +44,9 @@ class FollowButton extends PureComponent {
             buttonClass = 'btn-outline-secondary';
             iconClass = 'ion-plus-round';
         }
+
         return (
-            <button className={`btn btn-sm ${buttonClass}`} onClick={this.handleClick.bind(this)}>
+            <button className={`btn btn-sm ${buttonClass} ${this.props.extraClassName}`} onClick={this.handleClick.bind(this)}>
                 <i className={iconClass}></i>
                 &nbsp;
                 {text} {username}
@@ -100,6 +110,7 @@ const FavoriteButtonWithRouter = withRouter(FavoriteButton);
 const RemoveButtonWithRouter = withRouter(RemoveButton);
 
 export {
+    FollowButton,
     FollowButtonWithRouter,
     FavoriteButtonWithRouter,
     EditButton,

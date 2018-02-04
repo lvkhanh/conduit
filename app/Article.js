@@ -17,7 +17,8 @@ class Article extends PureComponent {
         this.state = {
             article: {}
         };
-        this.handleChangeArticle = this.handleChangeArticle.bind(this);
+        this.handleFavorite = this.handleFavorite.bind(this);
+        this.handleFollow = this.handleFollow.bind(this);
     }
 
     componentDidMount () {
@@ -29,8 +30,17 @@ class Article extends PureComponent {
             });
     }
 
-    handleChangeArticle (article) {
+    handleFavorite (article) {
         this.setState({article});
+    }
+
+    handleFollow (profile) {
+        this.setState({
+            article: {
+                ...this.state.article,
+                author: profile
+            }
+        });
     }
 
     render () {
@@ -40,7 +50,7 @@ class Article extends PureComponent {
                 <div className="banner">
                     <div className="container">
                         <h1>{title}</h1>
-                        <ArticleMeta article={this.state.article} currentUser={this.props.user} onChange={this.handleChangeArticle}/>
+                        <ArticleMeta article={this.state.article} currentUser={this.props.user} handleFollow={this.handleFollow} handleFavorite={this.handleFavorite}/>
                     </div>
                 </div>
 
@@ -48,7 +58,7 @@ class Article extends PureComponent {
                     <ArticleContent body={body}/>
                     <hr />
                     <div className="article-actions">
-                        <ArticleMeta article={this.state.article} currentUser={this.props.user} onChange={this.handleChangeArticle}/>
+                        <ArticleMeta article={this.state.article} currentUser={this.props.user} handleFollow={this.handleFollow} handleFavorite={this.handleFavorite}/>
                     </div>
 
                     {/*<CommentSection/>*/}

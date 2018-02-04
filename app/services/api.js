@@ -10,6 +10,9 @@ var withAuthHeader = (token) => {
     }
 };
 
+export const ARTICLE_ENDPOINT = 'articles';
+export const ARTICLE_FEED_ENDPOINT = 'articles/feed';
+
 var api = {
     login(user) {
         let { email, password } = user;
@@ -46,16 +49,29 @@ var api = {
             image,
             bio
         } = user;
-
-        return axios.put(getEndPoint('user'), {
-            user: { email, username, password, image, bio }
-        });
+        return axios
+            .put(getEndPoint('user'), {
+                user: { email, username, password, image, bio }
+            }, {
+                headers: withAuthHeader(Token.get())
+            })
+            .then(response => response.data.user);
     },
 
     getProfile(username) {
-        let profileEndpoint = getEndPoint(`profiles/${username}`);
+        let token = Token.get(),
+            params = {},
+            profileEndpoint = getEndPoint(`profiles/${username}`);
 
-        return axios.get(profileEndpoint);
+        if (token) {
+            params = {
+                headers: withAuthHeader(token)
+            }
+        }
+
+        return axios
+            .get(profileEndpoint, params)
+            .then(response => response.data.profile);
     },
 
     followUser(username) {
@@ -78,6 +94,22 @@ var api = {
                 headers: withAuthHeader(token)
             })
             .then(response => response.data.profile);
+    },
+
+    getArticles (endpoint, params = {}) {
+        let token = Token.get(),
+            articlesEndpoint = getEndPoint(endpoint);
+
+        if (token) {
+            params = {
+                params,
+                headers: withAuthHeader(token)
+            }
+        }
+
+        return axios
+            .get(articlesEndpoint, { ...params })
+            .then(response => response.data);
     },
 
     articlesList(params) {

@@ -19,10 +19,10 @@ class ArticleMeta extends PureComponent {
 
     render () {
         let {createdAt, author = {}} = this.state.article,
-            {image = '', username = ''} = author,
+            {image = '', username = '', following = false} = author,
             groupButtonEle;
 
-        if (Storage.get('currentUsername') === username) {
+        if (Storage.getCurrentUser() === username) {
             groupButtonEle = (
                 <Fragment>
                     <EditButton article={this.state.article}/>
@@ -33,9 +33,9 @@ class ArticleMeta extends PureComponent {
         } else if (username !== '') {
             groupButtonEle = (
                 <Fragment>
-                    <FollowButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
+                    <FollowButtonWithRouter username={username} following={following} onClick={this.props.handleFollow}/>
                     &nbsp;&nbsp;
-                    <FavoriteButtonWithRouter article={this.state.article} onClick={this.props.onChange}/>
+                    <FavoriteButtonWithRouter article={this.state.article} onClick={this.props.handleFavorite}/>
                 </Fragment>
             );
         }
