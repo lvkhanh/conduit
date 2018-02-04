@@ -1,11 +1,9 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import Token from './services/token';
 import {ARTICLE_ENDPOINT, ARTICLE_FEED_ENDPOINT} from './services/api';
 import Feeds from './Feeds';
 import Tags from './Tags';
 import Tabs from './Tabs';
-
-
 
 const YOUR_FEED_UNI_ID      = 'yourFeedUniId';
 const GLOBAL_FEED_UNI_ID    = 'globalFeedUniId';

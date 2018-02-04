@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
-
-import Header from './Header';
-import Footer from './Footer';
+import { Switch, Route, Redirect, HashRouter } from 'react-router-dom';
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
 // pages
 import Home         from './Home';
@@ -12,12 +12,37 @@ import Profile      from './Profile';
 import Article      from './Article';
 import Settings     from './Settings';
 import EditArticle  from './EditArticle';
+import Header from './Header';
+import Footer from './Footer';
 
 import Token from './services/token';
 import Api from './services/api';
 import withProps from './hocs/withProps';
 
-class RealworldApp extends Component {
+import rootReducer from './reducers';
+import rootSaga from './sagas';
+
+
+const RealworldApp = () => {
+
+    const sagas = createSagaMiddleware();
+    const store = createStore(rootReducer, {}, applyMiddleware(sagas));
+
+    sagas.run(rootSaga);
+
+    return (
+        <Provider store={store}>
+            <HashRouter>
+                <div>
+                    <Header/>
+                    <Footer />
+                </div>
+            </HashRouter>
+        </Provider>
+    );
+};
+/*
+class RealworldApp1 extends Component {
 
     constructor(props) {
         super(props);
@@ -66,27 +91,31 @@ class RealworldApp extends Component {
                 removeUser = this.removeUser;
 
         return (
-            <div>
-                <Header user={user} loading={loading}/>
-                <div className="content">
-                    <Switch>
-                        <Route path="/" exact   component={Home} />
-                        <Route path="/login" exact   component={withProps({setUser})(SignIn)} />
-                        <Route path="/settings" exact component={withProps({user, setUser, removeUser})(Settings)} />
-                        <Route path="/profile/:username" exact component={Profile} />
-                        <Route path="/register" component={Register} />
+            <Provider>
+                <HashRouter>
+                    <div>
+                        <Header user={user} loading={loading}/>
+                        <div className="content">
+                            <Switch>
+                                <Route path="/" exact   component={Home} />
+                                <Route path="/login" exact   component={withProps({setUser})(SignIn)} />
+                                <Route path="/settings" exact component={withProps({user, setUser, removeUser})(Settings)} />
+                                <Route path="/profile/:username" exact component={Profile} />
+                                <Route path="/register" component={Register} />
 
-                        <Route path="/article/view/:id"     component={Article} />
-                        <Route path="/article/new"          component={EditArticle} />
-                        <Route path="/article/edit/:id"     component={EditArticle} />
+                                <Route path="/article/view/:id"     component={Article} />
+                                <Route path="/article/new"          component={EditArticle} />
+                                <Route path="/article/edit/:id"     component={EditArticle} />
 
-                        <Redirect to="/" />
-                    </Switch>
-                </div>
-                <Footer />
-            </div>
+                                <Redirect to="/" />
+                            </Switch>
+                        </div>
+                        <Footer />
+                    </div>
+                </HashRouter>
+            </Provider>
         );
     }
-}
+}*/
 
 export default RealworldApp;
