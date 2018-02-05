@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import _ from 'lodash';
 import Token from './services/token';
-import Api from './services/api';
 import Storage from './services/storage';
+import {logOut, updateUserRequest} from './actions/setting';
 import {redirectIfNotAuthenticated} from './services/auth';
 
 class Settings extends Component {
@@ -9,7 +12,7 @@ class Settings extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            user: props.user
+            user: props.user || {}
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdate = this.handleUpdate.bind(this);
@@ -18,7 +21,7 @@ class Settings extends Component {
     handleSignOut () {
         Token.remove();
         Storage.remove('currentUsername');
-        this.props.removeUser();
+        this.props.logOut();
         this.props.history.push('/home');
     }
 
@@ -34,13 +37,17 @@ class Settings extends Component {
 
     handleUpdate (e) {
         e.preventDefault();
-        Api
-            .updateUser(this.state.user)
-            .then((user) => {
-                this.props.setUser(user);
-                this.props.history.push(`./profile/${user.username}`);
-            });
+        this.props.updateUser(this.state.user);
+    }
 
+    componentWillReceiveProps(props) {
+        if (!_.isEmpty(this.state.user) && !_.isEqual(props.user, this.state.user)) {
+            this.props.history.push(`./profile/${props.user.username}`);
+        } else {
+            this.setState({
+                user: props.user
+            });
+        }
     }
 
     componentWillMount () {
@@ -48,9 +55,11 @@ class Settings extends Component {
     }
 
     render () {
-        const   {user = {}} = this.state,
-                {image = '', username = '', bio = '', email = '', password = ''} = user;
-        if (!user) return null;
+        const {user = {}} = this.state,
+              {image = '', username = '', bio = '', email = '', password = ''} = user || {};
+
+        //if (!user) return null;
+
         return  (
             <div className="settings-page">
                 <div className="container page">
@@ -94,4 +103,18 @@ class Settings extends Component {
     }
 }
 
-export default Settings;
+export default withRouter(
+    connect(
+        ({currentUser}) => ({user: currentUser}),
+        dispatch => {
+            return {
+                logOut: () => {
+                    dispatch(logOut());
+                },
+                updateUser: (user) => {
+                    dispatch(updateUserRequest(user));
+                }
+            };
+        }
+    )(Settings)
+);

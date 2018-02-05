@@ -48,6 +48,7 @@
 
 2018-02-04
     * apply redux to Header, SignIn
+    * apply redux to Setting
 
 Useful links
     https://github.com/gothinkster/realworld/tree/master/api

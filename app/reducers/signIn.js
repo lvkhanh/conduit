@@ -1,6 +1,6 @@
 import {FETCH_USER_SUCCESS, FETCH_USER_FAILED} from '../actions/signIn';
 
-export const invalidInfoReducer = (state = false, {type}) => {
+export const invalidInfoReducer = (state = true, {type}) => {
     switch (type) {
         case FETCH_USER_SUCCESS:
             return false;

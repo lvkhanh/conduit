@@ -7,6 +7,11 @@ import {getUser} from './actions/signIn';
 
 class SignIn extends Component {
 
+    constructor (props) {
+        super(props);
+        this.isFristRender = true;
+    }
+
     handleSubmit (e) {
         e.preventDefault();
         this.props.signIn(this.emailInput.value, this.passwordInput.value);
@@ -16,6 +21,10 @@ class SignIn extends Component {
         if (!props.invalidInfo) {
             this.props.history.push('/');
         }
+    }
+
+    componentDidMount () {
+        this.isFristRender = false;
     }
 
     render () {
@@ -33,7 +42,7 @@ class SignIn extends Component {
                                 <Link to="/register">Need an account?</Link>
                             </p>
                             {
-                                this.props.invalidInfo &&
+                                !this.isFristRender && this.props.invalidInfo &&
                                 <ul className="error-messages">
                                     <li>email or password is invalid</li>
                                 </ul>

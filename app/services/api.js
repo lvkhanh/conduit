@@ -57,7 +57,8 @@ var api = {
             }, {
                 headers: withAuthHeader(Token.get())
             })
-            .then(response => response.data.user);
+            .then(response => ({user: response.data.user}))
+            .catch(response => ({error: response.response.data.errors}));
     },
 
     getProfile(username) {

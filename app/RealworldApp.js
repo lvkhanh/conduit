@@ -35,7 +35,12 @@ const RealworldApp = () => {
             <HashRouter>
                 <div>
                     <Header/>
-                    <Route path="/login" exact   component={SignIn} />
+                    <div className="content">
+                        <Switch>
+                            <Route path="/login" exact   component={SignIn} />
+                            <Route path="/settings" exact component={Settings} />
+                        </Switch>
+                        </div>
                     <Footer />
                 </div>
             </HashRouter>
